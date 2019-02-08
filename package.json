@@ -1,0 +1,26 @@
+{
+  "name": "notes-twitter",
+  "version": "1.0.0",
+  "description": "An application for leaving notes on Twitter friends and followers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZCole053/Excercise02_01_01.git"
+  },
+  "author": "Zedekiah M.  Cole",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZCole053/Excercise02_01_01/issues"
+  },
+  "homepage": "https://github.com/ZCole053/Excercise02_01_01#readme",
+  "dependencies": {
+    "async": "^2.6.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.4",
+    "gulp": "^4.0.0",
+    "oauth": "^0.9.15"
+  }
+}
