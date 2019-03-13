@@ -27,6 +27,9 @@ var queryString =  require('querystring');
 
 //pulling in new async module file
 var async = require('async');
+var storage = require('./storage.js');
+//storage.connect();
+
 
 //creating server port
 //var port = 8080;
@@ -37,11 +40,24 @@ var async = require('async');
 //it is an iffe returns function name
 app.use(require('cookie-parser')());
 
+//looks for static content like index but we made it relative with dirname
+app.use(express.static(__dirname + '/public'));
+
+//dynamic resources
+//interpertes files with ejs extenstion as a ejs file
+app.set('view engine', 'ejs');
+
 
 //checking for my end points endpoint
 app.get('/', function(req,res) {
-    //sends a response
-    res.send("<h3>Hello, world!</h3>");
+    var credentials = authenticator.getCredentials();
+    if(!credentials.access_token || !credentials.access_token_secret){
+        return res.redirect('login');
+    }       
+    // if(!storage.connected()){
+        console.log("Loading")
+        return renderMainPageFromTwitter(req,res);
+    // }
 });
 
 //pulling url route
@@ -125,6 +141,10 @@ app.get('/friends', function(req, res){
 
 //new route for waterfall method
 app.get('/allfriends', function(req,res){
+    renderMainPageFromTwitter(req, res);
+});
+
+function renderMainPageFromTwitter(req, res) {
     var credentials = authenticator.getCredentials();
     //constructing async waterfall
     async.waterfall([
@@ -161,11 +181,11 @@ app.get('/allfriends', function(req,res){
                 });
             },
             function(error){
-                console.log('last callback');
+                // console.log('last callback');
                 if(error){
                     return res.status(500).send(error);
                 }
-                console.log(ids);
+                // console.log(ids);
                 callback(null, ids);
             });
         },
@@ -203,13 +223,26 @@ app.get('/allfriends', function(req,res){
                 friends.sort(function(a,b){
                     return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
                 });
-                res.send(friends);
+                friends = friends.map(function(friend) {
+                    return {
+                        twitter_id:friend.id_stir,
+                        for_user: credentials.twitter_id,
+                        name: friend.name,
+                        screen_name: friend.screen_name,
+                        location: friend.location,
+                        profile_image_url: friend.profile_image_url
+                    }
+                });
+                res.render("index", { friends:friends});
+                if(storage.connected()) {
+                    storage.insertFriends(friends);
+                }
                 console.log('friends.length', friends.length);
             });
         }
     ]);
     //res.sendStatus(200);//debug
-});
+}
 
 app.get(url.parse(config.oauth_callback).path, function(req,res){
     //creating a callback function with a callback function
@@ -219,13 +252,22 @@ app.get(url.parse(config.oauth_callback).path, function(req,res){
             console.log(err);  
             //completes http rout
             //completes the circle
-            res.sendStatus(401);
+            res.redirect("/login");
         }else{
             //Sends to a user that it works
-            res.send("Authentication successful!");
+            res.redirect("/");
         }
     });
-})
+});
+
+app.get('/login', function(req,res){
+    res.render('login');
+});
+
+app.get('/logout', function(req,res){
+    authenticator.clearCredentials();
+    res.redirect('/login');
+});
 
 
 //building server and listening to the port

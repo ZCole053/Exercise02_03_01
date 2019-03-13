@@ -1,0 +1,43 @@
+<!doctype html>
+
+<html>
+   <head>
+       <title>Friends</title>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="initial-scale=1.0">
+       <link rel="stylesheet" href="style.css">
+   </head>
+   <body>
+       <div id="wrapper">
+           <a href="/logout"><button type="button" class="logout"></button></a>
+           <div id="friends=column" class="column">
+               <h1>Your Friends</h1>
+               <ul id="friends">
+                   <!-- dynamically creates a list of our friends -->
+                   <% friends.forEach(function(friend) { %>
+                       <li uid="<%= friend.twitter_id %>" class="friend">
+                           <img class="profile-image" src="<%= friend.profile_image_url %>" alt="">
+                           <p>
+                               <span class="name">
+                                   <%= friend.name %>
+                               </span>
+                               <span class="screen-name">
+                                   <%= friend.name %>
+                               </span>
+                           </p>
+                           <p class="location">
+                               <%= friend.location %>
+                           </p>
+                       </li>
+                   <% }); %>
+               </ul>
+           </div>
+           <div id="notes-column" class="column">
+               <h1>Notes</h1>
+               <ul id="notes">
+
+               </ul>
+           </div>
+       </div>
+   </body>
+</html>

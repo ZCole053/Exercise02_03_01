@@ -41,6 +41,14 @@ module.exports = {
     getCredentials: function(){
         return twitterCredentials;
     },
+    
+    clearCredentials: function(){
+        twitterCredentials.oauth_token = "";
+        twitterCredentials.oauth_token_secret = "";
+        twitterCredentials.access_token = "";
+        twitterCredentials.access_token_secret = "";
+        twitterCredentials.twitter_id = "";
+    },
 
     //generic get function
     //creating a function to pass things to the get 
